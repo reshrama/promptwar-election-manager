@@ -1,0 +1,17 @@
+/* Light Theme Timeline Adjustments */
+.timeline-item {
+    color: var(--slate-900);
+}
+
+.timeline-item .month {
+    color: var(--slate-500);
+}
+
+.timeline-item h4 {
+    color: var(--primary);
+}
+
+.phase-number {
+    background: var(--primary);
+    color: white;
+}

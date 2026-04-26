@@ -1,0 +1,51 @@
+/* Assistant Styles */
+.assistant-widget {
+    background: white;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+}
+
+.assistant-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    padding: 24px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.typing-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    display: inline-block;
+    animation: typing 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+.message.typing {
+    display: flex;
+    gap: 4px;
+    padding: 12px 20px;
+    background: #f1f5f9;
+}
+
+.chat-display::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-display::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+}

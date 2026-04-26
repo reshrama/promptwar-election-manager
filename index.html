@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Election Assistant | Your Guide to Democracy</title>
+    <meta name="description" content="An AI-powered assistant to help you navigate the Indian election process, find polling stations, and track important dates.">
+    
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Core Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🗳️</span>
+                <span class="logo-text">ElectionAssistant<span>.in</span></span>
+            </div>
+            <nav>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#dashboard" class="active" data-i18n="navDashboard">Dashboard</a></li>
+                    <li><a href="#voter-id" data-i18n="navVoterId">Voter ID</a></li>
+                    <li><a href="#timeline" data-i18n="navTimeline">Timeline</a></li>
+                    <li><a href="#help" data-i18n="navHelp">Help</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <select id="stateSwitcher" class="lang-select">
+                    <option value="">All India (National)</option>
+                    <optgroup label="States">
+                        <option value="AP">Andhra Pradesh</option>
+                        <option value="AR">Arunachal Pradesh</option>
+                        <option value="AS">Assam</option>
+                        <option value="BR">Bihar</option>
+                        <option value="CT">Chhattisgarh</option>
+                        <option value="GA">Goa</option>
+                        <option value="GJ">Gujarat</option>
+                        <option value="HR">Haryana</option>
+                        <option value="HP">Himachal Pradesh</option>
+                        <option value="JH">Jharkhand</option>
+                        <option value="KA">Karnataka</option>
+                        <option value="KL">Kerala</option>
+                        <option value="MP">Madhya Pradesh</option>
+                        <option value="MH">Maharashtra</option>
+                        <option value="MN">Manipur</option>
+                        <option value="ML">Meghalaya</option>
+                        <option value="MZ">Mizoram</option>
+                        <option value="NL">Nagaland</option>
+                        <option value="OR">Odisha</option>
+                        <option value="PB">Punjab</option>
+                        <option value="RJ">Rajasthan</option>
+                        <option value="SK">Sikkim</option>
+                        <option value="TN">Tamil Nadu</option>
+                        <option value="TG">Telangana</option>
+                        <option value="TR">Tripura</option>
+                        <option value="UP">Uttar Pradesh</option>
+                        <option value="UT">Uttarakhand</option>
+                        <option value="WB">West Bengal</option>
+                    </optgroup>
+                    <optgroup label="Union Territories">
+                        <option value="AN">Andaman and Nicobar Islands</option>
+                        <option value="CH">Chandigarh</option>
+                        <option value="DN">Dadra and Nagar Haveli and Daman and Diu</option>
+                        <option value="DL">Delhi</option>
+                        <option value="JK">Jammu and Kashmir</option>
+                        <option value="LA">Ladarkh</option>
+                        <option value="LD">Lakshadweep</option>
+                        <option value="PY">Puducherry</option>
+                    </optgroup>
+                </select>
+
+                <select id="langSwitcher" class="lang-select">
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी (Hindi)</option>
+                    <option value="bn">বাংলা (Bengali)</option>
+                    <option value="te">తెలుగు (Telugu)</option>
+                    <option value="mr">मराठी (Marathi)</option>
+                    <option value="ta">தமிழ் (Tamil)</option>
+                    <option value="gu">ગુજરાતી (Gujarati)</option>
+                    <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                    <option value="ml">മലയാളം (Malayalam)</option>
+                    <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                </select>
+                <div class="user-profile">
+                    <button id="setApiKeyBtn" class="badge" style="cursor:pointer; border:1px solid var(--primary); background:transparent; color:var(--primary);">Config AI</button>
+                    <span id="apiStatus" class="badge" style="background:#f1f5f9; color:#64748b;">Demo Mode</span>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="dashboard-layout" id="dashboard">
+        <aside class="sidebar">
+            <section class="assistant-widget card">
+                <div class="assistant-header">
+                    <div class="ai-avatar">AI</div>
+                    <div class="assistant-info">
+                        <h3 data-i18n="assistantName">Bharat Sahayak</h3>
+                        <p data-i18n="assistantTag">Your Election Expert</p>
+                    </div>
+                </div>
+                <div class="chat-display" id="chatDisplay">
+                    <div class="message assistant" data-i18n="initialMessage">
+                        Namaste! I'm Bharat Sahayak. How can I help you with the upcoming Indian elections today?
+                    </div>
+                </div>
+                <div class="chat-controls">
+                    <button id="attachBtn" class="attach-btn" title="Attach Document">📎</button>
+                    <input type="file" id="fileInput" style="display: none;" accept="image/*">
+                    <input type="text" id="chatInput" placeholder="Ask about registration, dates..." data-i18n-placeholder="chatPlaceholder" autocomplete="off">
+                    <button id="sendBtn">Send</button>
+                </div>
+            </section>
+        </aside>
+
+        <section class="content-area">
+            <div class="welcome-banner">
+                <h1><span data-i18n="welcomeTitle">Democracy is Your Power,</span> <span data-i18n="welcomeSub">Voting is Your Duty.</span></h1>
+                <p id="dynamicGreeting">Welcome back! Here's the latest update for <strong>General Elections</strong>.</p>
+            </div>
+
+            <section class="section-timeline">
+                <div class="section-header">
+                    <h2 data-i18n="sectionTimeline">Election Phases & Key Dates</h2>
+                </div>
+                <div class="timeline-container" id="timelineContainer"></div>
+            </section>
+
+            <div class="dashboard-grid">
+                <section class="grid-card news-card">
+                    <div class="card-header">
+                        <h3 data-i18n="newsTitle">Latest Election News</h3>
+                        <span class="badge">Live</span>
+                    </div>
+                    <div class="news-feed" id="newsFeed">
+                        <!-- News items will be injected here -->
+                    </div>
+                </section>
+
+                <section class="grid-card">
+                    <div class="card-header">
+                        <h3 data-i18n="majorParties">Major Political Parties</h3>
+                        <span id="currentState">National</span>
+                    </div>
+                    <div class="party-grid" id="partyGrid"></div>
+                </section>
+
+                <section class="grid-card">
+                    <div class="card-header">
+                        <h3 data-i18n="voterResourcesTitle">Voter Resources (ECI)</h3>
+                        <a href="https://voters.eci.gov.in" target="_blank" class="external-link">voters.eci.gov.in ↗</a>
+                    </div>
+                    <div class="resource-grid">
+                        <a href="https://voters.eci.gov.in/registration" target="_blank" class="resource-card">
+                            <div class="res-icon">📝</div>
+                            <div class="res-info">
+                                <strong data-i18n="newVoterReg">Register as New Voter</strong>
+                                <p data-i18n="newVoterDesc">Form 6 for fresh registration</p>
+                            </div>
+                        </a>
+                        <a href="https://electoralsearch.eci.gov.in" target="_blank" class="resource-card">
+                            <div class="res-icon">🔍</div>
+                            <div class="res-info">
+                                <strong data-i18n="voterRoll">Search Electoral Roll</strong>
+                                <p data-i18n="voterRollDesc">Find your name in the list</p>
+                            </div>
+                        </a>
+                        <a href="https://voters.eci.gov.in/download-epic" target="_blank" class="resource-card">
+                            <div class="res-icon">💳</div>
+                            <div class="res-info">
+                                <strong>Download e-EPIC</strong>
+                                <p>Get your digital Voter ID</p>
+                            </div>
+                        </a>
+                        <a href="https://voters.eci.gov.in/know-your-candidate" target="_blank" class="resource-card">
+                            <div class="res-icon">👤</div>
+                            <div class="res-info">
+                                <strong data-i18n="knowCandidate">Know Your Candidate</strong>
+                                <p data-i18n="knowCandidateDesc">View affidavits and education</p>
+                            </div>
+                        </a>
+                    </div>
+                </section>
+            </div>
+
+
+            <section class="educational-videos">
+                <div class="section-header">
+                    <h2 data-i18n="eduHub">Educational Hub</h2>
+                </div>
+                <div class="video-grid" id="videoGrid"></div>
+            </section>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p id="footerCopy">&copy; Indian Election Assistant. Data sourced from ECI public portals.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

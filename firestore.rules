@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow anyone to read the election data
+    // Only authorized admins (you) can write
+    match /states/{state} {
+      allow read: if true;
+      allow write: if false; // Update this to your admin ID later
+    }
+  }
+}
