@@ -1,5 +1,6 @@
 import { stateParties } from '../data/parties.data.js';
 import { DatabaseService } from './database.service.js';
+import { geminiConfig } from '../config.js';
 
 /**
  * Gemini AI Service - Enterprise Resilience Version
@@ -9,12 +10,12 @@ export class GeminiService {
         this.lang = 'en';
         this.db = new DatabaseService();
         this.cache = JSON.parse(localStorage.getItem('AI_CACHE') || '{}');
-        const currentKey = 'AIzaSyCGQLROINrBQeqw6b0sMOJPXIk7PZ-gZIM';
+        const currentKey = geminiConfig.apiKey;
         if (localStorage.getItem('LAST_KEY') !== currentKey) {
             localStorage.clear();
             localStorage.setItem('LAST_KEY', currentKey);
         }
-        this.apiKey = localStorage.getItem('GEMINI_API_KEY') || currentKey;
+        this.apiKey = currentKey;
         this.model = localStorage.getItem('GEMINI_MODEL') || 'gemini-1.5-flash';
         this.version = 'v1beta';
         this.lastRequestTime = 0;
@@ -88,15 +89,54 @@ export class GeminiService {
             const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
             const jsonMatch = text.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
-                const parsed = JSON.parse(jsonMatch[0]);
-                // Stitch verified parties into the AI response
-                parsed.parties = verifiedSource.parties;
-                this.saveToCache(cacheKey, parsed);
-                return parsed;
+                try {
+                    const parsed = JSON.parse(jsonMatch[0]);
+                    // Stitch verified parties into the AI response
+                    parsed.parties = verifiedSource.parties;
+                    this.saveToCache(cacheKey, parsed);
+                    return parsed;
+                } catch (parseError) {
+                    console.error("AI returned invalid JSON", parseError);
+                }
             }
             return this.getMockFallback(stateName);
         } catch (error) {
             return this.getMockFallback(stateName);
+        }
+    }
+
+    async askStream(prompt, onChunk, fileData = null) {
+        try {
+            const url = `https://generativelanguage.googleapis.com/${this.version}/models/${this.model}:streamGenerateContent?key=${this.apiKey}`;
+            const body = {
+                contents: [{ parts: [{ text: prompt }] }]
+            };
+            
+            if (fileData) {
+                body.contents[0].parts.push({
+                    inline_data: fileData
+                });
+            }
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            const data = await response.json();
+            let fullText = "";
+            
+            if (Array.isArray(data)) {
+                data.forEach(chunk => {
+                    fullText += chunk.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                    onChunk(fullText);
+                });
+            } else {
+                onChunk(data.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't process that.");
+            }
+        } catch (e) {
+            onChunk("Service temporarily unavailable. Please verify your API key.");
         }
     }
 

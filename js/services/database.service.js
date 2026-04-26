@@ -1,16 +1,13 @@
+import { firebaseConfig } from '../config.js';
+
 /**
  * Database Service - Google Firebase (Firestore) Integration
  * Handles fetching of constant election data from a remote Google-based source.
  */
 export class DatabaseService {
     constructor() {
-        // These would be your Firebase Config values
-        this.config = {
-            apiKey: "AIzaSyCGQLROINrBQeqw6b0sMOJPXIk7PZ-gZIM",
-            projectId: "promptwar-election-manager",
-            databaseURL: "https://promptwar-election-manager-default-rtdb.firebaseio.com"
-        };
-        this.isLive = this.config.projectId !== "YOUR_PROJECT_ID";
+        this.config = firebaseConfig;
+        this.isLive = !!(this.config.apiKey && !this.config.apiKey.includes('YOUR_'));
     }
 
     async getStateData(stateName) {
@@ -26,7 +23,12 @@ export class DatabaseService {
         try {
             // This is the logic to fetch from Firestore
             const response = await fetch(`${this.config.databaseURL}/states/${stateName}.json`);
-            return await response.json();
+            if (!response.ok) throw new Error('Network response was not ok');
+            
+            const data = await response.json();
+            if (!data) throw new Error('No data found for this state');
+            
+            return data;
         } catch (e) {
             console.warn("DB Fetch failed, using local fallback.");
             const { stateParties } = await import('./parties.data.js');

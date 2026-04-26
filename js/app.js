@@ -120,8 +120,8 @@ class App {
     }
 
     updateApiStatus() {
-        const key = localStorage.getItem('GEMINI_API_KEY') || 'AIzaSyBkF9menCmIws__jc-HeRarPSDh-LjIEUM';
-        if (key && key !== 'YOUR_GEMINI_API_KEY') {
+        const key = localStorage.getItem('GEMINI_API_KEY');
+        if (key && key.startsWith('AIzaSy') && key.length > 20) {
             this.apiStatusEl.innerText = "Live AI Mode";
             this.apiStatusEl.style.background = "#dcfce7";
             this.apiStatusEl.style.color = "#15803d";
@@ -143,13 +143,20 @@ class App {
         await this.syncStateData();
     }
 
+    setWelcomeText(title, summary, isOffline) {
+        const badge = isOffline ? '<span class="badge-mini">Offline Mode</span>' : '';
+        // Use textContent for the dynamic summary to prevent XSS
+        this.welcomeP.innerHTML = `<strong></strong>: <span class="summary-text"></span> ${badge}`;
+        this.welcomeP.querySelector('strong').textContent = title;
+        this.welcomeP.querySelector('.summary-text').textContent = summary;
+    }
+
     async syncStateData() {
-        // Only fetch if we have a state or if we're not hitting limits
         try {
             const dynamicData = await this.geminiService.fetchElectionContext(this.currentStateName, this.currentLang);
             if (dynamicData.summary) {
                 const isLocal = dynamicData.summary.includes('Local Intelligence');
-                this.welcomeP.innerHTML = `<strong>${dynamicData.electionType || 'General Election'}</strong>: ${dynamicData.summary} ${isLocal ? '<span class="badge-mini">Offline Mode</span>' : ''}`;
+                this.setWelcomeText(dynamicData.electionType || 'General Election', dynamicData.summary, isLocal);
             }
             if (dynamicData.phases) this.renderDynamicTimeline(dynamicData.phases);
             if (dynamicData.parties) this.renderDynamicParties(dynamicData.parties);

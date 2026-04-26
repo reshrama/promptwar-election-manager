@@ -1,10 +1,11 @@
+import { geminiConfig } from '../config.js';
+
 /**
  * Translation Service - Integration with Google Cloud Translation (Simulated)
  */
-
 export class TranslationService {
     constructor() {
-        this.apiKey = 'YOUR_GOOGLE_CLOUD_API_KEY';
+        this.apiKey = geminiConfig.apiKey;
         this.targetLang = 'en';
     }
 
