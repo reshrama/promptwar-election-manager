@@ -6,9 +6,9 @@ export class DatabaseService {
     constructor() {
         // These would be your Firebase Config values
         this.config = {
-            apiKey: "YOUR_FIREBASE_API_KEY",
-            projectId: "YOUR_PROJECT_ID",
-            databaseURL: "https://your-project.firebaseio.com"
+            apiKey: "AIzaSyCGQLROINrBQeqw6b0sMOJPXIk7PZ-gZIM", // Your newest key
+            projectId: "promptwar-election-manager",
+            databaseURL: "https://promptwar-election-manager.firebaseio.com"
         };
         this.isLive = false; // Set to true once you link your Firebase
     }
